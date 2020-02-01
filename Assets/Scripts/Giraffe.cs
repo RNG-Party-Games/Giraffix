@@ -8,9 +8,9 @@ public class Giraffe : MonoBehaviour
     public Rigidbody2D head;
     public GameObject segment;
     public List<NeckSegment> neck_segments;
+    public List<Sprite> necksprites;
     public int amt_segments;
     public static Giraffe instance;
-
     void Awake()
     {
         if(instance == null)
@@ -28,6 +28,7 @@ public class Giraffe : MonoBehaviour
             lastJoint.connectedBody = new_segment.GetComponent<Rigidbody2D>();
             new_segment.transform.position = new Vector2(lastJoint.transform.position.x + lastJoint.anchor.x, lastJoint.transform.position.y + lastJoint.anchor.y + new_segment.GetComponent<SpriteRenderer>().bounds.size.y / 2);
             lastJoint = new_segment.GetComponent<HingeJoint2D>();
+            new_segment.GetComponent<SpriteRenderer>().sprite = RandomNeck();
             neck_segments.Insert(0, new_segment.GetComponent<NeckSegment>());
             if(i == amt_segments - 1)
             {
@@ -58,6 +59,12 @@ public class Giraffe : MonoBehaviour
         new_segment.transform.position = new Vector2(bottom_segment.connection.position.x, bottom_segment.connection.position.y - new_segment.GetComponent<SpriteRenderer>().bounds.size.y / 2);
         //new_segment.transform.position = new Vector2(body.transform.position.x + body.anchor.x, body.transform.position.y + body.anchor.y);
         new_segment.GetComponent<HingeJoint2D>().connectedBody = neck_segments[neck_segments.Count - 1].GetComponent<Rigidbody2D>();
+        new_segment.GetComponent<SpriteRenderer>().sprite = RandomNeck();
         neck_segments.Add(new_segment.GetComponent<NeckSegment>());
+    }
+
+    Sprite RandomNeck() {
+        int index = Random.Range(0, necksprites.Count);
+        return necksprites[index];
     }
 }

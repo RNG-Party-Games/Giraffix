@@ -6,6 +6,7 @@ public class HeadController : MonoBehaviour
 {
     public float speed;
     Rigidbody2D rb;
+    bool hasWrench = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +18,7 @@ public class HeadController : MonoBehaviour
     {
         Vector2 move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         rb.AddForce(speed*move);
+        CheckWrench();
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -26,5 +28,9 @@ public class HeadController : MonoBehaviour
             col.gameObject.GetComponent<Food>().Eat();
             Giraffe.instance.Add_Segment();
         }
+    }
+
+    public void CheckWrench() {
+
     }
 }
