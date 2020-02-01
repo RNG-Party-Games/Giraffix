@@ -50,6 +50,12 @@ public class Giraffe : MonoBehaviour
 
     }
 
+    public void Add_Segments(int amt) {
+        for(int i = 0; i < amt; ++i) {
+            Add_Segment();
+        }
+    }
+
     public void Add_Segment()
     {
         GameObject new_segment = Instantiate(segment, this.transform);

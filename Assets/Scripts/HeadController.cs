@@ -28,11 +28,6 @@ public class HeadController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if(col.transform.tag == "Food")
-        {
-            col.gameObject.GetComponent<Food>().Eat();
-            Giraffe.instance.Add_Segment();
-        }
         if(!hasWrench && col.transform.tag == "WrenchTrigger")
         {
             wrench.GetComponent<BoxCollider2D>().enabled = false;
@@ -41,6 +36,18 @@ public class HeadController : MonoBehaviour
             wrench.transform.localRotation = wrenchRot;
             wrench.bodyType = RigidbodyType2D.Kinematic;
             hasWrench = true;
+        }
+        // for plant triggers
+        if (col.transform.tag == "Food" && !col.GetComponent<Food>().IsEaten()) {
+            col.gameObject.GetComponent<Food>().Eat();
+            Giraffe.instance.Add_Segments(col.gameObject.GetComponent<Food>().foodValue);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.transform.tag == "Food") {
+            collision.gameObject.GetComponent<Food>().Eat();
+            Giraffe.instance.Add_Segments(collision.gameObject.GetComponent<Food>().foodValue);
         }
     }
 

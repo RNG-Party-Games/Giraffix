@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
+    public int foodValue;
+    public bool isPlant;
+    public Sprite eatenSprite;
+    bool isEaten;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +22,16 @@ public class Food : MonoBehaviour
 
     public void Eat()
     {
-        Destroy(this.gameObject);
+        isEaten = true;
+        if(isPlant) {
+            GetComponent<SpriteRenderer>().sprite = eatenSprite;
+        }
+        else {
+            Destroy(this.gameObject);
+        }
+    }
+
+    public bool IsEaten() {
+        return isEaten;
     }
 }

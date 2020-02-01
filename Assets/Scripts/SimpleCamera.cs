@@ -17,6 +17,6 @@ public class SimpleCamera : MonoBehaviour
     {
         Vector3 vel = Vector3.zero;
         Vector3 target = new Vector3(follow.position.x, follow.position.y, -5);
-        this.transform.position = Vector3.SmoothDamp(transform.position, target, ref vel, smoothTime);
+        transform.position = Vector3.SmoothDamp(transform.position, target, ref vel, smoothTime);
     }
 }

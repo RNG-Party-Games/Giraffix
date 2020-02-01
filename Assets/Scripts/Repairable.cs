@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Repairable : MonoBehaviour
 {
-    public bool broken;
+    public bool startBroken;
     public Sprite fixedSprite, brokenSprite;
     public float maxhp;
     public ParticleSystem sparkles, smoke;
@@ -13,7 +13,9 @@ public class Repairable : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        hp = maxhp;
+        if(!startBroken) {
+            hp = maxhp;
+        }
         sr = GetComponent<SpriteRenderer>();
         CheckState();
     }
@@ -35,7 +37,7 @@ public class Repairable : MonoBehaviour
         {
             if(hp < maxhp)
             {
-                hp += collision.relativeVelocity.magnitude;
+                hp = maxhp;
                 CheckState();
             }
         }
@@ -46,22 +48,23 @@ public class Repairable : MonoBehaviour
         {
             hp = maxhp;
             sparkles.Play();
-            smoke.Stop();
         }
         else
         {
             sparkles.Stop();
-            smoke.Play();
         }
 
         if (hp <= 0)
         {
             hp = 0;
             sr.sprite = brokenSprite;
+            smoke.Play();
         }
         else
         {
             sr.sprite = fixedSprite;
+            smoke.Stop();
         }
+        GameState.instance.UpdateRepair();
     }
 }
