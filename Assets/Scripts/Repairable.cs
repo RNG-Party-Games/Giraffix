@@ -6,12 +6,16 @@ public class Repairable : MonoBehaviour
 {
     public bool broken;
     public Sprite fixedSprite, brokenSprite;
+    public float maxhp;
+    public ParticleSystem sparkles, smoke;
     public float hp;
     SpriteRenderer sr;
     // Start is called before the first frame update
     void Start()
     {
+        hp = maxhp;
         sr = GetComponent<SpriteRenderer>();
+        CheckState();
     }
 
     // Update is called once per frame
@@ -27,14 +31,36 @@ public class Repairable : MonoBehaviour
                 CheckState();
             }
         }
+        else if(collision.transform.tag == "Wrench")
+        {
+            if(hp < maxhp)
+            {
+                hp += collision.relativeVelocity.magnitude;
+                CheckState();
+            }
+        }
     }
 
     public void CheckState() {
-        if(hp <= 0) {
+        if(hp >= maxhp)
+        {
+            hp = maxhp;
+            sparkles.Play();
+            smoke.Stop();
+        }
+        else
+        {
+            sparkles.Stop();
+            smoke.Play();
+        }
+
+        if (hp <= 0)
+        {
             hp = 0;
             sr.sprite = brokenSprite;
         }
-        else {
+        else
+        {
             sr.sprite = fixedSprite;
         }
     }
