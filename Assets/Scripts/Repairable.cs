@@ -27,10 +27,11 @@ public class Repairable : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        if(collision.transform.tag == "Player") {
-            if(collision.relativeVelocity.magnitude > 1 && hp > 0) {
+        if(collision.transform.tag == "Player" || collision.transform.tag == "Player Head") {
+            if(collision.relativeVelocity.magnitude > 2 && hp > 0) {
                 hp -= collision.relativeVelocity.magnitude;
                 CheckState();
+                GameState.instance.Bump();
             }
         }
         else if(collision.transform.tag == "Wrench")
@@ -39,6 +40,7 @@ public class Repairable : MonoBehaviour
             {
                 hp = maxhp;
                 CheckState();
+                GameState.instance.WrenchSFX();
             }
         }
     }

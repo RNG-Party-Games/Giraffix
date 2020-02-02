@@ -10,6 +10,7 @@ public class HeadController : MonoBehaviour
     Quaternion wrenchRot;
     Rigidbody2D rb;
     bool hasWrench = true;
+    bool wrenchTouching = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,31 +22,36 @@ public class HeadController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        rb.AddForce(speed*move);
-        CheckWrench();
+        if (!GameState.instance.IsEnded()) {
+            Vector2 move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            rb.AddForce(speed * move);
+            CheckWrench();
+        }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        if(!hasWrench && col.transform.tag == "WrenchTrigger")
+        if(!hasWrench && collision.transform.tag == "WrenchTrigger")
         {
-            wrench.GetComponent<BoxCollider2D>().enabled = false;
-            wrench.transform.parent = this.transform;
-            wrench.transform.localPosition = wrenchPos;
-            wrench.transform.localRotation = wrenchRot;
-            wrench.bodyType = RigidbodyType2D.Kinematic;
-            hasWrench = true;
+            GrabWrench();
         }
         // for plant triggers
-        if (col.transform.tag == "Food" && !col.GetComponent<Food>().IsEaten()) {
-            col.gameObject.GetComponent<Food>().Eat();
-            Giraffe.instance.Add_Segments(col.gameObject.GetComponent<Food>().foodValue);
+        if (collision.transform.tag == "Food" && !collision.GetComponent<Food>().IsEaten()) {
+            GameState.instance.Chomp();
+            collision.gameObject.GetComponent<Food>().Eat();
+            Giraffe.instance.Add_Segments(collision.gameObject.GetComponent<Food>().foodValue);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision) {
+        if (!hasWrench && collision.transform.tag == "WrenchTrigger") {
+            wrenchTouching = false;
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.transform.tag == "Food") {
+            GameState.instance.Chomp();
             collision.gameObject.GetComponent<Food>().Eat();
             Giraffe.instance.Add_Segments(collision.gameObject.GetComponent<Food>().foodValue);
         }
@@ -64,5 +70,18 @@ public class HeadController : MonoBehaviour
             wrench.AddTorque(rotateSpeed, ForceMode2D.Impulse);
             hasWrench = false;
         }
+        else if(!hasWrench && wrenchTouching && Input.GetMouseButtonDown(0)) {
+            GrabWrench();
+        }
+    }
+
+    void GrabWrench() {
+        wrench.GetComponent<BoxCollider2D>().enabled = false;
+        wrench.transform.parent = this.transform;
+        wrench.transform.localPosition = wrenchPos;
+        wrench.transform.localRotation = wrenchRot;
+        wrench.bodyType = RigidbodyType2D.Kinematic;
+        hasWrench = true;
+        wrenchTouching = true;
     }
 }

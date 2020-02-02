@@ -11,53 +11,45 @@ public class Giraffe : MonoBehaviour
     public List<Sprite> necksprites;
     public int amt_segments;
     public static Giraffe instance;
-    void Awake()
-    {
-        if(instance == null)
-        {
+    void Awake() {
+        if (instance == null) {
             instance = this;
         }
     }
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         HingeJoint2D lastJoint = body;
-        for (int i = 0; i < amt_segments; ++i)
-        {
+        for (int i = 0; i < amt_segments; ++i) {
             GameObject new_segment = Instantiate(segment, this.transform);
             lastJoint.connectedBody = new_segment.GetComponent<Rigidbody2D>();
             new_segment.transform.position = new Vector2(lastJoint.transform.position.x + lastJoint.anchor.x, lastJoint.transform.position.y + lastJoint.anchor.y + new_segment.GetComponent<SpriteRenderer>().bounds.size.y / 2);
             lastJoint = new_segment.GetComponent<HingeJoint2D>();
             new_segment.GetComponent<SpriteRenderer>().sprite = RandomNeck();
             neck_segments.Insert(0, new_segment.GetComponent<NeckSegment>());
-            if(i == amt_segments - 1)
-            {
+            if (i == amt_segments - 1) {
                 new_segment.layer = 9;
             }
         }
         lastJoint.connectedBody = head;
         head.transform.position = new Vector2(lastJoint.transform.position.x + lastJoint.anchor.x, lastJoint.transform.position.y + lastJoint.anchor.y + head.GetComponent<SpriteRenderer>().bounds.size.y / 2);
 
-        for(int i = 0; i < neck_segments.Count; ++i)
-        {
+        for (int i = 0; i < neck_segments.Count; ++i) {
             neck_segments[i].name = "Neck " + i;
         }
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
 
     }
 
     public void Add_Segments(int amt) {
-        for(int i = 0; i < amt; ++i) {
+        for (int i = 0; i < amt; ++i) {
             Add_Segment();
         }
     }
 
-    public void Add_Segment()
-    {
+    public void Add_Segment() {
         GameObject new_segment = Instantiate(segment, this.transform);
         new_segment.name = "Neck " + (neck_segments.Count);
         body.connectedBody = new_segment.GetComponent<Rigidbody2D>();
